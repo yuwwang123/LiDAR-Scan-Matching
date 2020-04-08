@@ -5,9 +5,9 @@
 #include "ros/ros.h"
 #include "sensor_msgs/LaserScan.h"
 #include <geometry_msgs/PoseStamped.h>
-#include "scan_matching_skeleton/correspond.h"
-#include "scan_matching_skeleton/transform.h"
-#include "scan_matching_skeleton/visualization.h"
+#include "yuwei_scan_matching/correspond.h"
+#include "yuwei_scan_matching/transform.h"
+#include "yuwei_scan_matching/visualization.h"
 #include <tf/transform_broadcaster.h>
 
 
@@ -20,7 +20,7 @@ const string& FRAME_POINTS = "laser";
 
 const float RANGE_LIMIT = 10.0;
 
-const float MAX_ITER = 2.0;
+const float MAX_ITER = 5.0;
 const float MIN_INFO = 0.1;
 const float A = (1-MIN_INFO)/MAX_ITER/MAX_ITER;
 
@@ -77,19 +77,16 @@ class ScanProcessor {
       computeJump(jump_table, prev_points);
       ROS_INFO("Starting Optimization");
 
-      curr_trans = Transform();
+      curr_trans = Transform(0.1,0.1,0.1);
 
       while (count < MAX_ITER && (curr_trans != prev_trans || count==0)) {
         transformPoints(points, curr_trans, transformed_points);
 
-
-
         //************************************************ Find correspondence between points of the current and previous frames  *************** ////
-        // **************************************************** getCorrespondence() function is the fast search function and getNaiveCorrespondence function is the naive search option **** ////
 
-        // getCorrespondence(prev_points, transformed_points, points, jump_table, corresponds, A*count*count+MIN_INFO);
+        getCorrespondence(prev_points, transformed_points, points, jump_table, corresponds, A*count*count+MIN_INFO);
 
-        getNaiveCorrespondence(prev_points, transformed_points, points, jump_table, corresponds, A*count*count+MIN_INFO);
+       // getNaiveCorrespondence(prev_points, transformed_points, points, jump_table, corresponds, A*count*count+MIN_INFO);
 
 
         prev_trans = curr_trans;
@@ -111,7 +108,6 @@ class ScanProcessor {
       prev_points = points;
     }
 
-    // Handles reading of scan, pushes fills points vector
     void readScan(const sensor_msgs::LaserScan::ConstPtr& msg) {
       float range_min = msg->range_min;
       float range_max = msg->range_max;
@@ -147,7 +143,7 @@ class ScanProcessor {
      msg.pose.orientation.y = q.y();
      msg.pose.orientation.z = q.z();
      msg.pose.orientation.w = q.w();
-     msg.header.frame_id = "laser";
+     msg.header.frame_id = "map";
      msg.header.stamp = ros::Time::now();
      pos_pub.publish(msg);
      tr.setOrigin(tf::Vector3(global_tf(0,2), global_tf(1,2), 0));

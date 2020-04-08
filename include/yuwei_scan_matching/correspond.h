@@ -67,12 +67,14 @@ struct Correspondence{
     piy = p1y + (p1y - p2y)*d;
     v << p1y - p2y, p2x - p1x;
   }
+  
   Eigen::Vector2f getNormalNorm(){
     // Eigen::Vector2f v;
     // v << p->getX() - pix,  p->getY() - piy;
     if (v.norm() > 0) { v = v / v.norm(); }
     return v;
   }
+
   geometry_msgs::Point getPiGeo(){
     geometry_msgs::Point pi;
     pi.x = pix;

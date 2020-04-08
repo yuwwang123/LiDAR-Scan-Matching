@@ -6,7 +6,7 @@ using namespace std;
 static const float EPSILON = 0.00001;
 
 //#include <Eigen/Geometry>
-#include <scan_matching_skeleton/correspond.h>
+#include <yuwei_scan_matching/correspond.h>
 
 struct Transform {
   float x_disp, y_disp, theta_rot;
@@ -24,6 +24,7 @@ struct Transform {
   bool operator!=(Transform& t2) {
     return !(*this == t2);
   }
+
 
   Transform operator+(Transform& t2) {
     Eigen::Matrix3f H1 = getMatrix();
@@ -43,6 +44,7 @@ struct Transform {
     p.r = sqrt(x*x+y*y);
     p.theta = atan2(y,x);
     p.theta = p.theta + theta_rot;
+    p.wrapTheta();
     return p;
   }
 
