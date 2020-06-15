@@ -1,8 +1,0 @@
-prefix=/home/yuwei/catkin_ws/src/yuwei_scan_matching/cmake-build-debug/devel
-
-Name: yuwei_scan_matching
-Description: Description of yuwei_scan_matching
-Version: 0.0.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: roscpp rospy
