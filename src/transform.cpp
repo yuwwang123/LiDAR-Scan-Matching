@@ -244,7 +244,7 @@ float greatest_real_root(float a, float b, float c, float d, float e) {
 }}
 
 void updateTransform(vector<Correspondence>& corresponds, Transform& curr_trans) {
-	int number_iter = 1;
+	int number_iter = 2;
 
 	for(int iter = 0; iter<number_iter; iter++){
 

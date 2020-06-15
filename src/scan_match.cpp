@@ -9,7 +9,7 @@
 #include "yuwei_scan_matching/transform.h"
 #include "yuwei_scan_matching/visualization.h"
 #include <tf/transform_broadcaster.h>
-
+#include <nav_msgs/Odometry.h>
 
 using namespace std;
 
@@ -20,7 +20,7 @@ const string& FRAME_POINTS = "laser";
 
 const float RANGE_LIMIT = 10.0;
 
-const float MAX_ITER = 5.0;
+const float MAX_ITER = 2.0;
 const float MIN_INFO = 0.1;
 const float A = (1-MIN_INFO)/MAX_ITER/MAX_ITER;
 
@@ -54,7 +54,18 @@ class ScanProcessor {
       marker_pub = n.advertise<visualization_msgs::Marker>(TOPIC_RVIZ, 1);
       points_viz = new PointVisualizer(marker_pub, "scan_match", FRAME_POINTS);
       corr_viz = new CorrespondenceVisualizer(marker_pub, "scan_match", FRAME_POINTS);
-      global_tf = Eigen::Matrix3f::Identity(3,3);
+
+        nav_msgs::Odometry odom_msg;
+        boost::shared_ptr<nav_msgs::Odometry const> odom_ptr;
+        odom_ptr = ros::topic::waitForMessage<nav_msgs::Odometry>("odom", ros::Duration(5));
+        if (odom_ptr == nullptr){cout<< "fail to receive odom message!"<<endl;}
+        else{
+            odom_msg = *odom_ptr;
+        }
+      double theta = tf::getYaw(odom_msg.pose.pose.orientation);
+      global_tf << cos(theta), -sin(theta), odom_msg.pose.pose.position.x,
+                   sin(theta),  cos(theta), odom_msg.pose.pose.position.y,
+                    0.0,         0.0,                 1.0;
     }
 
     void handleLaserScan(const sensor_msgs::LaserScan::ConstPtr& msg) {
@@ -87,7 +98,6 @@ class ScanProcessor {
         getCorrespondence(prev_points, transformed_points, points, jump_table, corresponds, A*count*count+MIN_INFO);
 
        // getNaiveCorrespondence(prev_points, transformed_points, points, jump_table, corresponds, A*count*count+MIN_INFO);
-
 
         prev_trans = curr_trans;
         ++count;

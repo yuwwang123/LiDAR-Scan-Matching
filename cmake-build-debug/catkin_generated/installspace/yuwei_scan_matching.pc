@@ -1,0 +1,8 @@
+prefix=/usr/local
+
+Name: yuwei_scan_matching
+Description: Description of yuwei_scan_matching
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: roscpp rospy
