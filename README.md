@@ -1,4 +1,4 @@
-# LiDAR ICP Scan Matching
+# Fast ICP Scan Matching
 Fast Iterative Closest Point Scan Matching for F1/10 autonomous car
 
 Used a Point-to-Line metric for measuring error in transformation. 
