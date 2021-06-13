@@ -7,4 +7,3 @@ Implementation based on "An ICP variant using a point-to-line metric, Andrea Cen
 
 http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.329.6781&rep=rep1&type=pdf
 
-![](test.gif)
